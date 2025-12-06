@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Countdown — December 20</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --accent:#111827;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans",sans-serif;
+      background:linear-gradient(180deg,var(--bg),#ffffff);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      color:var(--accent);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    .card{
+      background:var(--card);
+      padding:28px 36px;
+      border-radius:16px;
+      box-shadow:0 6px 30px rgba(16,24,40,0.08);
+      max-width:540px;
+      width:100%;
+      text-align:center;
+    }
+    h1{margin:0 0 10px;font-weight:600;font-size:20px}
+    p.lead{margin:0 0 22px;color:var(--muted)}
+
+    .countdown{
+      display:flex;
+      gap:14px;
+      justify-content:center;
+      align-items:baseline;
+      flex-wrap:wrap;
+    }
+    .unit{
+      min-width:80px;
+      padding:14px 10px;
+      border-radius:12px;
+      background:linear-gradient(180deg,#fbfdff,#f6f9ff);
+      box-shadow:0 3px 18px rgba(16,24,40,0.06);
+    }
+    .value{font-size:28px;font-weight:700;letter-spacing:-0.02em}
+    .label{display:block;margin-top:6px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em}
+
+    .note{margin-top:18px;font-size:13px;color:var(--muted)}
+
+    @media (prefers-color-scheme:dark){
+      :root{--bg:#0b1020;--card:#071025;--muted:#9aa4b2;--accent:#e6eef8}
+      body{background:linear-gradient(180deg,#071025,#041024)}
+      .unit{background:linear-gradient(180deg,#071425,#052033)}
+      .card{box-shadow:0 8px 40px rgba(2,6,23,0.7)}
+    }
+  </style>
+</head>
+<body>
+  <main class="card" role="main">
+    <h1>Countdown to December 20</h1>
+    <p class="lead">A simple, minimal timer — reaches zero on December 20.</p>
+
+    <div class="countdown" aria-live="polite" aria-atomic="true" id="countdown">
+      <div class="unit"><div class="value" id="days">—</div><span class="label">Days</span></div>
+      <div class="unit"><div class="value" id="hours">—</div><span class="label">Hours</span></div>
+      <div class="unit"><div class="value" id="minutes">—</div><span class="label">Minutes</span></div>
+      <div class="unit"><div class="value" id="seconds">—</div><span class="label">Seconds</span></div>
+    </div>
+
+    <p class="note" id="note">Target: December 20 at local time.</p>
+  </main>
+
+  <script>
+    (function(){
+      // Determine target year: use this year's Dec 20, unless it's already passed — then next year.
+      var now = new Date();
+      var year = now.getFullYear();
+      var target = new Date(year, 11, 20, 0, 0, 0); // December is month 11 (0-indexed)
+      if (now > target) target = new Date(year + 1, 11, 20, 0, 0, 0);
+
+      var els = {
+        days: document.getElementById('days'),
+        hours: document.getElementById('hours'),
+        minutes: document.getElementById('minutes'),
+        seconds: document.getElementById('seconds'),
+        note: document.getElementById('note')
+      };
+
+      function pad(n){return String(n).padStart(2,'0')}
+
+      function update(){
+        var now = new Date();
+        var diff = Math.max(0, Math.floor((target - now) / 1000));
+        var days = Math.floor(diff / 86400);
+        var hours = Math.floor((diff % 86400) / 3600);
+        var minutes = Math.floor((diff % 3600) / 60);
+        var seconds = diff % 60;
+
+        els.days.textContent = String(days);
+        els.hours.textContent = pad(hours);
+        els.minutes.textContent = pad(minutes);
+        els.seconds.textContent = pad(seconds);
+
+        if (diff === 0) {
+          els.note.textContent = "It's here — December 20 has arrived.";
+          clearInterval(timer);
+        } else {
+          // show the exact target with year for clarity
+          var opts = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+          els.note.textContent = 'Target: ' + target.toLocaleString(undefined, opts) + ' (local time)';
+        }
+      }
+
+      update();
+      var timer = setInterval(update, 1000);
+
+    })();
+  </script>
+</body>
+</html>
